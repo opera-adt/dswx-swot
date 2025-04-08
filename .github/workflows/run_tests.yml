@@ -1,0 +1,44 @@
+name: Pytest
+
+on: [pull_request, push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  # https://github.com/pytest-dev/pytest/issues/2042#issuecomment-429289164
+  PY_IGNORE_IMPORTMISMATCH: 1
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: dswx-swot
+          environment-file: environment.yml
+          generate-run-shell: true
+          create-args: >-
+            python=${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          eval "$(micromamba shell hook --shell bash)"
+          micromamba activate dswx-swot
+          python -m pip install --no-deps .
+
+      - name: Run tests with Pytest
+        run: |
+          eval "$(micromamba shell hook --shell bash)"
+          micromamba activate dswx-swot
+          pytest . --maxfail=1 --disable-warnings -v

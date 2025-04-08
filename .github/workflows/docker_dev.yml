@@ -1,0 +1,72 @@
+name: Docker Build & Publish
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-build:
+    name: Build & Publish Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Authenticate to GHCR
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # Set image tag to 'latest'
+      - name: Set image tag
+        id: set_image_tag
+        run: |
+          IMAGE_TAG="ghcr.io/${{ github.repository_owner }}/dswx-swot"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+
+      # Build the Docker image with 'latest' tag
+      - name: Build Docker image
+        run: |
+          docker build --network=host \
+            --tag ${{ env.IMAGE_TAG }}:latest \
+            --file=docker/Dockerfile .
+
+      # Smoke test
+      - name: Run smoke test
+        run: |
+          docker run --rm ${{ env.IMAGE_TAG }}:latest dswx-swot run --help
+
+      # Push image to GHCR
+      - name: Push Docker image to GHCR
+        run: |
+          docker push ${{ env.IMAGE_TAG }}:latest
+
+      # Save Docker image to tarball
+      - name: Save Docker image to tarball
+        run: |
+          TAR_NAME="docker-image-latest.tar"
+          docker save ${{ env.IMAGE_TAG }}:latest > "$TAR_NAME"
+          echo "TAR_NAME=$TAR_NAME" >> $GITHUB_ENV
+
+      # Upload tarball artifact
+      - name: Upload Docker image tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TAR_NAME }}
+          path: ${{ env.TAR_NAME }}
+
+      # Print usage info
+      - name: Print image usage
+        run: |
+          echo "✅ Docker image published to GHCR:"
+          echo "  docker pull ${{ env.IMAGE_TAG }}:latest"
+          echo "🗃️  Tarball available as workflow artifact: ${{ env.TAR_NAME }}"

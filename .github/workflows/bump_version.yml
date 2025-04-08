@@ -1,0 +1,50 @@
+name: Bump Version and Push Tag
+
+on:
+    workflow_dispatch:
+
+jobs:
+  tag-version:
+    name: Bump Version and Push Tag
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Git configuration
+      - name: Set up Git user
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      # Get the latest version tag, bump it and create a new tag
+      - name: Bump version and create a new tag
+        run: |
+          # Fetch all tags to ensure we can get the latest one
+          git fetch --tags
+
+          # Get the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+
+          # If no tags exist, start with v0.0.1
+          if [[ -z "$LATEST_TAG" ]]; then
+            LATEST_TAG="v0.0.0"
+          fi
+
+          # Extract the version parts
+          VERSION_PARTS=(${LATEST_TAG//./ })
+          PATCH=${VERSION_PARTS[2]}
+
+          # Increment the patch version
+          PATCH=$((PATCH + 1))
+
+          # Construct the new tag
+          NEW_TAG="v${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
+
+          # Create and push the new version tag
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+
+          echo "Created and pushed new tag: $NEW_TAG"
