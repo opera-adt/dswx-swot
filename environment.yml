@@ -1,0 +1,23 @@
+name: dswx-swot
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python>=3.11
+  - pip>=21.3  # https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/#editable-installation
+  - git  # for pip install, due to setuptools_scm
+  - click>=7.0
+  - h5netcdf>=1.0
+  - rasterio
+  - netcdf4
+  - numpy
+  - scipy
+  - cmap
+  - pre_commit
+  - matplotlib-base
+  - pydantic>=2.1
+  - ruamel.yaml>=0.15
+  - yamale
+  #- xarray
+  - pytest
+  - earthaccess

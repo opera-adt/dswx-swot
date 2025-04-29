@@ -41,7 +41,7 @@ WORKDIR /home/ops
 
 # Copy files while preserving ownership
 # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cach
-COPY --chown=opera_user:opera_user conda-env.yml /home/ops/opera/environment.yml
+COPY --chown=opera_user:opera_user environment.yml /home/ops/opera/environment.yml
 COPY --chown=opera_user:opera_user . /home/ops/opera
 
 # Ensure all files are read/write by the user
