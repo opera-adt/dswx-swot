@@ -9,12 +9,16 @@ import numpy as np
 class GRID(NamedTuple):
     """NamedTuple to store grid coordinates and metadata for MGRS tiles.
 
-    Attributes:
-        x (np.ndarray): Array of x coordinates.
-        y (np.ndarray): Array of y coordinates.
-        bounds (Tuple[float, float, float, float]): The bounds of the MGRS tile
-            (minx, miny, maxx, maxy).
-        epsg (int): EPSG code for the tile's coordinate reference system.
+    Parameters
+    ----------
+    x : np.ndarray
+        Array of x coordinates.
+    y : np.ndarray
+        Array of y coordinates.
+    bounds : tuple of float
+        The bounds of the MGRS tile (minx, miny, maxx, maxy).
+    epsg : int
+        EPSG code for the tile's coordinate reference system.
 
     """
 
@@ -27,15 +31,21 @@ class GRID(NamedTuple):
 def read_database(input_file: str | Path) -> gpd.GeoDataFrame:
     """Read the first layer of a SQLite database file into a GeoDataFrame.
 
-    Args:
-        input_file (Union[str, Path]): Path to the SQLite database file.
+    Parameters
+    ----------
+    input_file : str or Path
+        Path to the SQLite database file.
 
-    Returns:
-        gpd.GeoDataFrame: GeoDataFrame of the first layer in the database.
+    Returns
+    -------
+    gpd.GeoDataFrame
+        GeoDataFrame of the first layer in the database.
 
-    Raises:
-        ValueError: If the database file cannot be opened or read, or if there are
-            no layers in the file.
+    Raises
+    ------
+    ValueError
+        If the database file cannot be opened or read, or if there are no layers in the
+        file.
 
     """
     input_file = Path(input_file)
@@ -55,19 +65,23 @@ def read_database(input_file: str | Path) -> gpd.GeoDataFrame:
 def get_mgrs_tile_coords(tile_df: gpd.GeoDataFrame, resolution: int = 90) -> GRID:
     """Generate grid based on the bounds of an MGRS tile and resolution.
 
-    Args:
-        tile_df (gpd.GeoDataFrame): GeoDataFrame containing MGRS tile geometries
-            and the 'epsg' column.
-        resolution (int): Grid resolution in the units of the tile's CRS. Default
-            is 90 meters.
+    Parameters
+    ----------
+    tile_df : gpd.GeoDataFrame
+        GeoDataFrame containing MGRS tile geometries and the 'epsg' column.
+    resolution : int
+        Grid resolution in the units of the tile's CRS. The default is 90 meters.
 
-    Returns:
-        GRID: NamedTuple containing x and y coordinate arrays, bounds, and EPSG
-            code for the tile.
+    Returns
+    -------
+    GRID
+        NamedTuple containing x and y coordinate arrays, bounds, and the EPSG code.
 
-    Raises:
-        ValueError: If the GeoDataFrame does not contain an 'epsg' column or if
-            the CRS does not match the EPSG code.
+    Raises
+    ------
+    ValueError
+        If the GeoDataFrame does not contain an 'epsg' column or if the CRS does
+        not match the EPSG code.
 
     """
     if "epsg" in tile_df.columns:

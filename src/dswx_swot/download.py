@@ -100,15 +100,21 @@ def download_swot(
 ) -> list[str] | str:
     """Download SWOT Level-2 high-resolution raster data from NASA Earthdata.
 
-    Args:
-        output_dir (str or Path): Directory to save downloaded files.
-        start_date (str): Start date in 'YYYY-MM-DD' format.
-        end_date (str): End date in 'YYYY-MM-DD' format.
-        granule_id (str): Identifier for the specific granule (wildcards supported).
+    Parameters
+    ----------
+    output_dir : str or Path
+        Directory where downloaded DSWX-S1 products will be saved.
+    start_date : str
+        Start date in 'YYYY-MM-DDTHH:MM:SS' format (e.g., '2025-03-13T00:00:00').
+    end_date : str
+        End date in 'YYYY-MM-DDTHH:MM:SS' format (e.g., '2025-03-20T00:00:00').
+    granule_id : str
+        Identifier for the specific granule_id (wildcards supported),e.g. 539_107F
 
-    Returns:
-        List[str] or str: Paths to downloaded files or a single file path if only one
-        is downloaded.
+    Returns
+    -------
+    list of str or str
+        Paths to downloaded files or a single file path if only one is downloaded.
 
     """
     _ = _earthacess_authenticate()
@@ -133,15 +139,21 @@ def download_dswx_s1(
 ) -> list[str] | str:
     """Download OPERA Level-3 DSWX-S1 flood mapping products from NASA Earthdata.
 
-    Args:
-        output_dir (str or Path): Directory to save downloaded files.
-        start_date (str): Start date in 'YYYY-MM-DD' format.
-        end_date (str): End date in 'YYYY-MM-DD' format.
-        granule_id (str): Identifier for the specific granule (wildcards supported).
+    Parameters
+    ----------
+    output_dir : str or Path
+        Directory where downloaded DSWX-S1 products will be saved.
+    start_date : str
+        Start date in 'YYYY-MM-DDTHH:MM:SS' format (e.g., '2025-03-13T00:00:00').
+    end_date : str
+        End date in 'YYYY-MM-DDTHH:MM:SS' format (e.g., '2025-03-20T00:00:00').
+    granule_id : str
+        Identifier for the specific MGRS_ID (wildcards supported),e.g. 11SLT
 
-    Returns:
-        List[str] or str: Paths to downloaded files or a single file path if only one
-        is downloaded.
+    Returns
+    -------
+    list of str or str
+        Paths to downloaded files or a single file path if only one is downloaded.
 
     """
     _ = _earthacess_authenticate()
@@ -166,14 +178,19 @@ def download_stac(
 ) -> Path:
     """Download and merge geospatial data from a STAC API for a given area of interest.
 
-    Args:
-        output_dir (str or Path): Directory to save the merged output.
-        aoi_bbox (list or tuple): Bounding box [minX, minY, maxX, maxY] of the area
-            of interest.
-        stac_lyr (str): Layer key ('hand' or 'esa_worldcover'). Defaults to 'hand'.
+    Parameters
+    ----------
+    output_dir : str or Path
+        Directory where downloaded STAC items will be saved.
+    aoi_bbox : list or tuple
+        Bounding box for the area of interest in [west, south, east, north] format.
+    stac_lyr : str, optional
+        STAC layer name to search/download (default is "hand").
 
-    Returns:
-        Path: File path to the merged GeoTIFF.
+    Returns
+    -------
+    Path
+        Path to the directory where STAC items are saved.
 
     """
     output_dir = Path(output_dir)
